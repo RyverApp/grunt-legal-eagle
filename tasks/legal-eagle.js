@@ -48,16 +48,20 @@ var massageLicenses = function (options, licenses, callback) {
 
   if (options.failOnUnknown && unknownDependencies.length > 0) {
     error = new Error('Unknown license for dependencies: ' +
-      _.pluck(unknownDependencies, 'name').join(', '));
+      _.map(unknownDependencies, function(o) { return o.name; }).join(', '));
   }
 
   if (options.failOnUnsafe && unsafeDependencies.length > 0) {
     error = new Error('Unsafe license for dependencies: ' +
-      _.pluck(unsafeDependencies, 'name').join(', '));
+      _.map(unsafeDependencies, function(o) { return o.name; }).join(', '));
   }
 
   if (options.omitSafe) {
     dependencies = _.union(unknownDependencies, unsafeDependencies);
+  } 
+
+  if (options.omit) {
+    dependencies = _.filter(dependencies, options.omit);
   }
 
   callback(error, {
